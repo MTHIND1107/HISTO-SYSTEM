@@ -29,3 +29,19 @@ int attach_shared_memory(int shmid, shared_memory_t **shm) {
     }
     return 0;
 }
+
+void detach_shared_memory(shared_memory_t *shm) {
+    if (shm != NULL) {
+        shmdt(shm);
+    }
+}
+
+void remove_shared_memory(int shmid) {
+    shmctl(shmid, IPC_RMID, NULL);
+}
+
+void init_shared_memory(shared_memory_t *shm) {
+    memset(shm->buffer, 0, BUFFER_SIZE);
+    shm->read_index = 0;
+    shm->write_index = 0;
+}  
