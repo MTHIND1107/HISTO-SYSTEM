@@ -78,3 +78,110 @@ void sigalrm_handler(int signum) {
     /* Set alarm for next read */
     alarm(2);
 }
+
+/**
+ * Display histogram of letter counts
+ */
+void display_histogram() {
+    /* Clear screen */
+    printf("\033[2J\033[H");
+    
+    /* Display histogram for each letter */
+    for (int i = 0; i < LETTER_RANGE; i++) {
+        char letter = MIN_LETTER + i;
+        int count = letter_counts[i];
+        
+        /* Display letter and count */
+        printf("%c-%03d ", letter, count);
+        
+        /* Display histogram bars */
+        int hundreds = count / 100;
+        int tens = (count % 100) / 10;
+        int ones = count % 10;
+        
+        /* Display hundreds as '*' */
+        for (int h = 0; h < hundreds; h++) {
+            printf("*");
+        }
+        
+        /* Display tens as '+' */
+        for (int t = 0; t < tens; t++) {
+            printf("+");
+        }
+        
+        /* Display ones as '-' */
+        for (int o = 0; o < ones; o++) {
+            printf("-");
+        }
+        
+        printf("\n");
+    }
+    
+    fflush(stdout);
+}
+
+/**
+ * Clean up and exit
+ */
+void cleanup_and_exit() {
+    /* Display final histogram */
+    display_histogram();
+    
+    /* Clean up IPC resources if we're the last to use them */
+    detach_shared_memory(shm);
+    remove_shared_memory(shmid);
+    remove_semaphore(semid);
+    
+    /* Exit message */
+    printf("Shazam !!\n");
+}
+
+int main(int argc, char *argv[]) {
+    /* Check arguments */
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <shmid> <dp1_pid> <dp2_pid>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    /* Get command line arguments */
+    shmid = atoi(argv[1]);
+    dp1_pid = atoi(argv[2]);
+    dp2_pid = atoi(argv[3]);
+    
+    /* Verify arguments */
+    if (shmid <= 0 || dp1_pid <= 0 || dp2_pid <= 0) {
+        fprintf(stderr, "Invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Attach to shared memory */
+    if (attach_shared_memory(shmid, &shm) != 0) {
+        fprintf(stderr, "Failed to attach to shared memory\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Create semaphore */
+    semid = create_semaphore();
+    if (semid == -1) {
+        fprintf(stderr, "Failed to create semaphore\n");
+        detach_shared_memory(shm);
+        return EXIT_FAILURE;
+    }
+    
+    /* Set up signal handlers */
+    signal(SIGINT, sigint_handler);
+    signal(SIGALRM, sigalrm_handler);
+    
+    /* Start the 2-second alarm for reading data */
+    alarm(2);
+    
+    /* Main loop */
+    while (running) {
+        pause();  /* Wait for signals */
+    }
+    
+    /* Clean up and exit */
+    cleanup_and_exit();
+    
+    return EXIT_SUCCESS;
+}
