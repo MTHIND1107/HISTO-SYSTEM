@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 int create_shared_memory() {
     int shmid;

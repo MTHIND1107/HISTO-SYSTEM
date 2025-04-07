@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#define SEM_KEY 0x1234
+
 int create_semaphore() {
     int semid;
     union semun arg;
