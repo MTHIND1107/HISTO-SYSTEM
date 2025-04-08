@@ -12,6 +12,13 @@
 #define DC_H
 
 #include <signal.h>
+#include <sys/types.h>
+
+/* Letter range constants */
+#define MIN_LETTER 'A'
+#define MAX_LETTER 'T'
+#define LETTER_RANGE (MAX_LETTER - MIN_LETTER + 1)
+
 
 /* Signal handlers */
 void sigint_handler(int signum);
