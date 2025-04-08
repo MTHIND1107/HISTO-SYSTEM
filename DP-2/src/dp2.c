@@ -65,8 +65,10 @@ int main(int argc, char *argv[]) {
         perror("fork");
         return EXIT_FAILURE;
     } else if (dc_pid == 0) {
-        /* Child process (DC) */
-        execl("../DC/bin/DC", "DC", shmid_str, dp1_pid_str, dp2_pid_str, NULL);
+
+        char path[PATH_MAX];
+        snprintf(path, sizeof(path), "%s/DC/bin/DC", getenv("PWD"));
+        execl(path, "DC", shmid_str, dp1_pid_str, dp2_pid_str, NULL);
         
         /* If exec fails */
         perror("execl");

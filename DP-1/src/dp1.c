@@ -8,6 +8,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <limits.h>
+
+#define PATH_MAX 4096
 
 /* Global variables */
 int running = 1;
@@ -89,8 +92,10 @@ int main() {
         remove_semaphore(semid);
         return EXIT_FAILURE;
     } else if (dp2_pid == 0) {
-        /* Child process (DP-2) */
-        execl("../DP-2/bin/DP-2", "DP-2", shmid_str, NULL);
+       
+        char path[PATH_MAX];
+        snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
+        execl(path, "DP-2", shmid_str, NULL);
         
         /* If exec fails */
         perror("execl");
