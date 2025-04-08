@@ -13,7 +13,7 @@ union semun {
 };
 
 /* Functions */
-int create_semaphore();
+int attach_semaphore();
 void semaphore_wait(int semid);
 void semaphore_signal(int semid);
 void remove_semaphore(int semid);

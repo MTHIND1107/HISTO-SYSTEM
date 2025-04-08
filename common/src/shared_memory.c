@@ -6,6 +6,14 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+int attach_semaphore() {
+    int semid = semget(SEM_KEY, 1, 0666); // Attach only (no IPC_CREAT)
+    if (semid == -1) {
+        perror("attach_semaphore: semget failed");
+    }
+    return semid;
+}
+
 int create_shared_memory() {
     int shmid;
     
