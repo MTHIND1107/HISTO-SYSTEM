@@ -1,3 +1,13 @@
+/*
+ * FILE: dc.h
+ * PROJECT: HISTOGRAM-SYSTEM
+ * PROGRAMMER: Manreet Thind
+ * FIRST VERSION: 08-04-2025
+ * DESCRIPTION:
+ * This header file declares the function prototypes and global variables
+ * used by the DC (Data Consumer) component. It includes signal handlers,
+ * histogram logic, and IPC-related shared variables.
+ */
 #ifndef DC_H
 #define DC_H
 
