@@ -17,7 +17,7 @@
 /* Letter range constants */
 #define MIN_LETTER 'A'
 #define MAX_LETTER 'T'
-#define LETTER_RANGE (MAX_LETTER - MIN_LETTER + 1)
+#define LETTER_RANGE (MAX_LETTER - MIN_LETTER + 1)
 
 
 /* Signal handlers */
