@@ -1,27 +1,34 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "../inc/dc.h"
 #include "../../common/inc/shared_memory.h"
 #include "../../common/inc/semaphore_utils.h"
 #include "../../common/inc/circular_buffer.h"
 #include "../../common/inc/common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
+#include <time.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
 
 /* Number of letters to read every 2 seconds */
 #define READ_BATCH_SIZE 40
+#define SEM_KEY 0x1234
 
 /* Global variables */
-int running = 1;
-int cleanup_mode = 0;
+volatile sig_atomic_t running = 1;
+volatile sig_atomic_t cleanup_mode = 0;
 int shmid = -1;
 int semid = -1;
 pid_t dp1_pid = -1;
 pid_t dp2_pid = -1;
 shared_memory_t *shm = NULL;
 int letter_counts[LETTER_RANGE] = {0};  /* Counts for letters A-T */
-int histogram_timer = 0;  /* Counter for 10-second histogram display */
+time_t last_histogram_time = 0;  /* Counter for 10-second histogram display */
 
 /**
  * Signal handler for SIGINT
@@ -43,6 +50,10 @@ void sigint_handler(int signum) {
  * Signal handler for SIGALRM
  */
 void sigalrm_handler(int signum) {
+    static int alarm_count = 0;
+    alarm_count++;
+    printf("SIGALRM triggered %d times\n", alarm_count);
+
     char buffer[READ_BATCH_SIZE];
     int num_read;
     
@@ -63,11 +74,15 @@ void sigalrm_handler(int signum) {
     }
     
     /* Update histogram timer */
-    histogram_timer++;
-    if (histogram_timer >= 5 || cleanup_mode) {  /* Display every 10 seconds (5 * 2s) */
+    time_t current_time = time(NULL);
+    printf("Delta time: %ld seconds\n", current_time - last_histogram_time);
+
+    if (current_time - last_histogram_time >= 10 || cleanup_mode) {
         display_histogram();
-        histogram_timer = 0;
+        last_histogram_time = current_time;
+        usleep(5000);
     }
+
     
     /* If in cleanup mode and no more data to read, exit */
     if (cleanup_mode && num_read == 0) {
@@ -126,17 +141,19 @@ void display_histogram() {
 void cleanup_and_exit() {
     /* Display final histogram */
     display_histogram();
-    
-    /* Clean up IPC resources if we're the last to use them */
-    detach_shared_memory(shm);
-    remove_shared_memory(shmid);
-    remove_semaphore(semid);
-    
+
     /* Exit message */
     printf("Shazam !!\n");
+    
+    fflush(stdout);
+
+    /* Clean up IPC resources if we're the last to use them */
+    detach_shared_memory(shm);
 }
 
 int main(int argc, char *argv[]) {
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     /* Check arguments */
     if (argc != 4) {
         fprintf(stderr, "Usage: %s <shmid> <dp1_pid> <dp2_pid>\n", argv[0]);
@@ -161,19 +178,38 @@ int main(int argc, char *argv[]) {
     }
     
     /* Create semaphore */
-    semid = create_semaphore();
+    semid = semget(SEM_KEY, 1, 0);
     if (semid == -1) {
         fprintf(stderr, "Failed to create semaphore\n");
         detach_shared_memory(shm);
         return EXIT_FAILURE;
     }
+
+    last_histogram_time = time(NULL);
     
-    /* Set up signal handlers */
-    signal(SIGINT, sigint_handler);
-    signal(SIGALRM, sigalrm_handler);
+    // === Set up signal handlers ===
+      struct sigaction sa;
+
+      // SIGALRM
+      memset(&sa, 0, sizeof(sa));
+      sa.sa_handler = sigalrm_handler;
+      sa.sa_flags = SA_RESTART;
+      sigemptyset(&sa.sa_mask);
+      if (sigaction(SIGALRM, &sa, NULL) == -1) {
+          perror("sigaction(SIGALRM)");
+          return EXIT_FAILURE;
+      }
+  
+      // SIGINT
+      if (signal(SIGINT, sigint_handler) == SIG_ERR) {
+          perror("signal(SIGINT)");
+          return EXIT_FAILURE;
+      }
+  
     
     /* Start the 2-second alarm for reading data */
     alarm(2);
+    printf("DC: Setup complete, waiting for alarms...\n");
     
     /* Main loop */
     while (running) {
