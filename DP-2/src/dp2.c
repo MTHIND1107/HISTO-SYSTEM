@@ -38,7 +38,7 @@ shared_memory_t *shm = NULL;
  * Outputs : Sets running = 0
  * Returns : None
  */
-void sigint_handler(int signum_attribute_((unused))) {
+void sigint_handler(int signum _attribute_((unused))) {
     running = 0;
 }
 
