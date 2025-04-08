@@ -5,31 +5,6 @@
 
 #define SEM_KEY 0x1234
 
-int create_semaphore() {
-    int semid;
-    union semun arg;
-    
-    /* Try to create semaphore */
-    semid = semget(SEM_KEY, 1, IPC_CREAT | IPC_EXCL | 0666);
-    if (semid != -1) {
-        /* Semaphore created, initialize to 1 */
-        arg.val = 1;
-        if (semctl(semid, 0, SETVAL, arg) == -1) {
-            perror("semctl");
-            return -1;
-        }
-    } else if (errno == EEXIST) {
-        /* Semaphore already exists, get the ID */
-        semid = semget(SEM_KEY, 1, 0666);
-    } else {
-        /* Error creating semaphore */
-        perror("semget");
-        return -1;
-    }
-    
-    return semid;
-}
-
 void semaphore_wait(int semid) {
     struct sembuf operation;
     

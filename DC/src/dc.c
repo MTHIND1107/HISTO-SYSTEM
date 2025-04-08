@@ -177,10 +177,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     
-    /* Create semaphore */
+    /* Attach semaphore */
     semid = semget(SEM_KEY, 1, 0);
     if (semid == -1) {
-        fprintf(stderr, "Failed to create semaphore\n");
+        fprintf(stderr, "Failed to attch semaphore\n");
         detach_shared_memory(shm);
         return EXIT_FAILURE;
     }

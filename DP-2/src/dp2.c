@@ -1,13 +1,19 @@
 #include "../inc/dp2.h"
+
 #include "../../common/inc/shared_memory.h"
 #include "../../common/inc/semaphore_utils.h"
 #include "../../common/inc/circular_buffer.h"
 #include "../../common/inc/common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <signal.h>
+#include <limits.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
+#define PATH_MAX 4096
 
 /* Global variables */
 int running = 1;
@@ -18,7 +24,7 @@ shared_memory_t *shm = NULL;
 /**
  * Signal handler for SIGINT
  */
-void sigint_handler(int signum) {
+void sigint_handler(int signum_attribute_((unused))) {
     running = 0;
 }
 
@@ -46,10 +52,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     
-    /* Create semaphore */
-    semid = create_semaphore();
+    /* Attach semaphore */
+    semid = attach_semaphore();
     if (semid == -1) {
-        fprintf(stderr, "Failed to create semaphore\n");
+        fprintf(stderr, "Failed to attach semaphore\n");
         return EXIT_FAILURE;
     }
     
