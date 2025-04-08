@@ -1,14 +1,16 @@
 #include "../inc/dp1.h"
+
 #include "../../common/inc/shared_memory.h"
 #include "../../common/inc/semaphore_utils.h"
 #include "../../common/inc/circular_buffer.h"
 #include "../../common/inc/common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
 #include <signal.h>
 #include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #define PATH_MAX 4096
 
@@ -40,7 +42,7 @@ void generate_and_write_letters() {
     semaphore_wait(semid);
     
     /* Write letters to buffer */
-    int written = bulk_write_to_buffer(shm, letters, 20);
+    (void)bulk_write_to_buffer(shm, letters, 20); //void silences unused warnings
     
     /* Release semaphore */
     semaphore_signal(semid);
@@ -49,6 +51,7 @@ void generate_and_write_letters() {
 int main() {
     pid_t dp2_pid;
     char shmid_str[16];
+    char path[PATH_MAX];
     
     /* Set up signal handler */
     signal(SIGINT, sigint_handler);
@@ -71,15 +74,14 @@ int main() {
     init_shared_memory(shm);
     
     /* Create semaphore */
-    semid = create_semaphore();
+    semid = semget(0x1234, 1, IPC_CREAT | 0666); //Fixed key permissions
     if (semid == -1) {
-        fprintf(stderr, "Failed to create semaphore\n");
-        detach_shared_memory(shm);
-        remove_shared_memory(shmid);
+        perror("DP-1: Segmet failed");
         return EXIT_FAILURE;
     }
     
     /* Convert shmid to string for passing to DP-2 */
+    snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
     snprintf(shmid_str, sizeof(shmid_str), "%d", shmid);
     
     /* Fork DP-2 process */
@@ -91,19 +93,14 @@ int main() {
         remove_shared_memory(shmid);
         remove_semaphore(semid);
         return EXIT_FAILURE;
-    } else if (dp2_pid == 0) {
-       
-        char path[PATH_MAX];
-        snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
+    } else if (dp2_pid == 0) {       
         execl(path, "DP-2", shmid_str, NULL);
-        
         /* If exec fails */
         perror("execl");
         exit(EXIT_FAILURE);
     }
     
     /* Parent process (DP-1) continues here */
-    
     /* Main loop */
     while (running) {
         /* Generate and write letters */

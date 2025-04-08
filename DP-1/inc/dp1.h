@@ -2,6 +2,7 @@
 #define DP1_H
 
 #include <signal.h>
+#define SEM_KEY 0x1234
 
 /* Signal handler for SIGINT */
 void sigint_handler(int signum);
