@@ -51,18 +51,18 @@ void sigint_handler(int signum) {
 void generate_and_write_letters() {
     char letters[20];
     
-    // Generate 20 random letters */
+    // Generate 20 random letters
     for (int i = 0; i < 20; i++) {
         letters[i] = generate_random_letter();
     }
     
-    // Acquire semaphore */
+    // Acquire semaphore
     semaphore_wait(semid);
     
-    // Write letters to buffer */
+    // Write letters to buffer
     (void)bulk_write_to_buffer(shm, letters, 20); //(void) silences unused warnings
     
-    // Release semaphore */
+    // Release semaphore 
     semaphore_signal(semid);
 }
 
@@ -78,27 +78,27 @@ int main() {
     char shmid_str[16];
     char path[PATH_MAX];
     
-    // Set up signal handler */
+    // Set up signal handler
     signal(SIGINT, sigint_handler);
     
-    // Create shared memory */
+    // Create shared memory
     shmid = create_shared_memory();
     if (shmid == -1) {
         fprintf(stderr, "Failed to create shared memory\n");
         return EXIT_FAILURE;
     }
     
-    // Attach to shared memory */
+    // Attach to shared memory
     if (attach_shared_memory(shmid, &shm) != 0) {
         fprintf(stderr, "Failed to attach to shared memory\n");
         remove_shared_memory(shmid);
         return EXIT_FAILURE;
     }
     
-    // Initialize shared memory */
+    // Initialize shared memory
     init_shared_memory(shm);
     
-    // Create semaphore  (initialize once) */
+    // Create semaphore  (initialize once)
     semid = semget(0x1234, 1, IPC_CREAT | 0666); //Fixed key permissions
     if (semid == -1) {
         perror("DP-1: Segmet failed");
@@ -109,10 +109,10 @@ int main() {
     snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
     snprintf(shmid_str, sizeof(shmid_str), "%d", shmid);
     
-    // Fork DP-2 process */
+    // Fork DP-2 process
     dp2_pid = fork();
     if (dp2_pid < 0) {
-        // Fork failed */
+        // Fork failed
         perror("fork");
         detach_shared_memory(shm);
         remove_shared_memory(shmid);
@@ -125,20 +125,20 @@ int main() {
         exit(EXIT_FAILURE);
     }
     
-    // Parent process (DP-1) continues here */
+    // Parent process (DP-1) continues here
     // Main loop */
     while (running) {
-        // Generate and write letters */
+        // Generate and write letters
         generate_and_write_letters();
         
-        // Sleep for 2 seconds */
+        // Sleep for 2 seconds
         sleep(2);
     }
     
     // Clean up */
     detach_shared_memory(shm);
     
-    // Wait for child to terminate */
+    // Wait for child to terminate
     waitpid(dp2_pid, NULL, 0);
     
     return EXIT_SUCCESS;
