@@ -24,7 +24,7 @@
 
 #define PATH_MAX 4096
 
-// Global variables */
+// Global variables
 int running = 1;
 int shmid = -1;
 int semid = -1;
@@ -105,7 +105,7 @@ int main() {
         return EXIT_FAILURE;
     }
     
-    // Convert shmid to string for passing to DP-2 */
+    // Convert shmid to string for passing to DP-2
     snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
     snprintf(shmid_str, sizeof(shmid_str), "%d", shmid);
     

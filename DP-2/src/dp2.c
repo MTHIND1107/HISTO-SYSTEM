@@ -38,7 +38,7 @@ shared_memory_t *shm = NULL;
  * Outputs : Sets running = 0
  * Returns : None
  */
-void sigint_handler(int signum _attribute_((unused))) {
+void sigint_handler(int signum__attribute__((unused))) {
     running = 0;
 }
 
@@ -95,6 +95,7 @@ int main(int argc, char *argv[]) {
 
         char path[PATH_MAX];
         snprintf(path, sizeof(path), "%s/DC/bin/DC", getenv("PWD"));
+        printf("Launching DC from path: %s\n", path);
         execl(path, "DC", shmid_str, dp1_pid_str, dp2_pid_str, NULL);
         
         // If exec fails

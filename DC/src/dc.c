@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
     // Attach semaphore 
     semid = semget(SEM_KEY, 1, 0);
     if (semid == -1) {
-        fprintf(stderr, "Failed to attch semaphore\n");
+        fprintf(stderr, "Failed to attach semaphore\n");
         detach_shared_memory(shm);
         return EXIT_FAILURE;
     }
