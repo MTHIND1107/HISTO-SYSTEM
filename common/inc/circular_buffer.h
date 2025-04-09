@@ -1,3 +1,13 @@
+/*
+ * FILE: circular_buffer.h
+ * PROJECT: HISTOGRAM-SYSTEM
+ * PROGRAMMER: Manreet Thind
+ * FIRST VERSION: 08-04-2025
+ * DESCRIPTION:
+ * This header file declares the functions used to manage a circular buffer within the shared memory.
+ * It includes functionality for writing and reading single or multiple characters while respecting
+ * the buffer boundaries and synchronization with semaphores.
+ */
 #ifndef CIRCULAR_BUFFER_H
 #define CIRCULAR_BUFFER_H
 

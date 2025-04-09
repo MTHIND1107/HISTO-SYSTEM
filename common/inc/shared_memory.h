@@ -1,4 +1,14 @@
-#ifndef SHARED_MEMORY_H
+/*
+ * FILE: shared_memory.h
+ * PROJECT: HISTOGRAM-SYSTEM
+ * PROGRAMMER: Manreet Thind
+ * FIRST VERSION: 08-04-2025
+ * DESCRIPTION:
+ * This header defines the structure of the shared memory used for inter-process communication.
+ * It includes buffer size constants and functions to create, attach, detach, and initialize
+ * the shared memory, along with its read/write indices.
+ */
+ #ifndef SHARED_MEMORY_H
 #define SHARED_MEMORY_H
 
 #include <sys/types.h>

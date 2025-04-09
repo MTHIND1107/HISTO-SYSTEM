@@ -1,3 +1,12 @@
+/*
+ * FILE: semaphore_utils.h
+ * PROJECT: HISTOGRAM-SYSTEM
+ * PROGRAMMER: Manreet Thind
+ * FIRST VERSION: 08-04-2025
+ * DESCRIPTION:
+ * This header file provides semaphore utility functions for attaching, waiting, signaling,
+ * and removing semaphores. It also defines the required union for semaphore control operations.
+ */
 #ifndef SEMAPHORE_UTILS_H
 #define SEMAPHORE_UTILS_H
 
