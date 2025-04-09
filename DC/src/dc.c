@@ -39,8 +39,8 @@ int semid = -1;
 pid_t dp1_pid = -1;
 pid_t dp2_pid = -1;
 shared_memory_t *shm = NULL;
-int letter_counts[LETTER_RANGE] = {0};  // Counts for letters A-T */
-time_t last_histogram_time = 0;  // Counter for 10-second histogram display */
+int letter_counts[LETTER_RANGE] = {0};  // Counts for letters A-T
+time_t last_histogram_time = 0;  // Counter for 10-second histogram display
 
 /*
  * Name    : sigint_handler
