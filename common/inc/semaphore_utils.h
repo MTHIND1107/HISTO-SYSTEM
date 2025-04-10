@@ -9,7 +9,6 @@
  * REFERENCES:
  * https://docs.oracle.com/cd/E19683-01/806-6867/6jfpgdcnj/index.html 
  */
- */
 #ifndef SEMAPHORE_UTILS_H
 #define SEMAPHORE_UTILS_H
 
