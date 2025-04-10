@@ -87,17 +87,27 @@ void sigalrm_handler(int signum) {
     semaphore_signal(semid);
     
     // Update letter counts
-    for (int i = 0; i < num_read; i++) {
-        if (buffer[i] >= MIN_LETTER && buffer[i] <= MAX_LETTER) {
-            letter_counts[buffer[i] - MIN_LETTER]++;
+    if (num_read > 0) {
+        printf("Read %d letters from buffer.\n", num_read);
+        printf("Letters read: ");
+        for (int i = 0; i < num_read; i++) {
+            printf("%c ", buffer[i]);
+    
+            if (buffer[i] >= MIN_LETTER && buffer[i] <= MAX_LETTER) {
+                int index = buffer[i] - MIN_LETTER;
+                letter_counts[index]++;
+            }
         }
+        printf("\n");
     }
+    
     
     // Update histogram timer
     time_t current_time = time(NULL);
-    printf("Delta time: %ld seconds\n", current_time - last_histogram_time);
+    printf("Time since last histogram: %ld seconds\n", current_time - last_histogram_time);
 
     if (current_time - last_histogram_time >= 10 || cleanup_mode) {
+        printf("Displaying histogram...\n");
         display_histogram();
         last_histogram_time = current_time;
         usleep(5000);
@@ -167,6 +177,7 @@ void display_histogram() {
  * Returns : None
  */
 void cleanup_and_exit() {
+    printf("Final histogram before shutdown:\n");
     // Display final histogram
     display_histogram();
 
