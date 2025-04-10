@@ -38,7 +38,8 @@ shared_memory_t *shm = NULL;
  * Outputs : Sets running = 0
  * Returns : None
  */
-void sigint_handler(int signum__attribute__((unused))) {
+void sigint_handler(int signum) {
+    (void)signum; // silence unused variable warning
     running = 0;
 }
 

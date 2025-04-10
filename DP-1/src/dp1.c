@@ -104,6 +104,12 @@ int main() {
         perror("DP-1: Segmet failed");
         return EXIT_FAILURE;
     }
+
+    // Initialize semaphore to 1
+    if (semctl(semid, 0, SETVAL, 1) == -1) {
+    perror("DP-1: semctl initialization failed");
+    return EXIT_FAILURE;
+    }
     
     // Convert shmid to string for passing to DP-2
     snprintf(path, sizeof(path), "%s/DP-2/bin/DP-2", getenv("PWD"));
