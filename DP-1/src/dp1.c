@@ -8,6 +8,7 @@
  * shared memory and semaphores. DP-1 generates 20 random letters every 2 seconds and writes them to the shared
  * circular buffer. It also forks and launches the DP-2 process and handles cleanup on SIGINT.
  */
+
 #include "../inc/dp1.h"
 
 #include "../../common/inc/shared_memory.h"

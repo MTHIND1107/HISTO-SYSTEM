@@ -6,6 +6,9 @@
  * DESCRIPTION:
  * This header file provides semaphore utility functions for attaching, waiting, signaling,
  * and removing semaphores. It also defines the required union for semaphore control operations.
+ * REFERENCES:
+ * https://docs.oracle.com/cd/E19683-01/806-6867/6jfpgdcnj/index.html 
+ */
  */
 #ifndef SEMAPHORE_UTILS_H
 #define SEMAPHORE_UTILS_H

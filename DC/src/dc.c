@@ -10,7 +10,7 @@
  * signals the producers to stop, drains the remaining buffer data, displays the final histogram,
  * and prints "Shazam !!" before exiting.
  */
-#define _POSIX_C_SOURCE 200809L
+#define _POSIX_C_SOURCE 200809L  // Enables POSIX-compliant features like sigaction 
 
 #include "../inc/dc.h"
 #include "../../common/inc/shared_memory.h"
@@ -237,6 +237,8 @@ int main(int argc, char *argv[]) {
       struct sigaction sa;
 
       // SIGALRM
+      // Configure SIGALRM using sigaction for reliable signal handling
+      // SA_RESTART ensures interrupted syscalls resume automatically
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = sigalrm_handler;
       sa.sa_flags = SA_RESTART;

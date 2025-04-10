@@ -7,6 +7,8 @@
  * This header defines the structure of the shared memory used for inter-process communication.
  * It includes buffer size constants and functions to create, attach, detach, and initialize
  * the shared memory, along with its read/write indices.
+ * REFERENCES:
+ * https://www.tutorialspoint.com/inter_process_communication/inter_process_communication_shared_memory.htm
  */
  #ifndef SHARED_MEMORY_H
 #define SHARED_MEMORY_H

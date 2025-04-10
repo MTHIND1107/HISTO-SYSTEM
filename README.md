@@ -50,7 +50,7 @@ DC will:
 - Show `Shazam !!` and exit
 
 ## Output Sample
-![alt text](image.png)
+![alt text](image-1.png)
 
 
 ## 📑 Notes
