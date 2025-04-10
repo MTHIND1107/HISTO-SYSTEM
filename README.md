@@ -30,13 +30,13 @@ make all
 
 ## How to Run
 
-1. **Open Terminal 1: Start the system**
+1. **Open Terminal 1 (in root directory): Start the system**
 ./DP-1/bin/DP-1
 This:
 - Initializes shared memory and semaphore
 - Forks and starts `DP-2`, which in turn starts `DC`
 
-2. **Open Terminal 2: Send SIGINT to DC**
+2. **Open Terminal 2 (could be anywhere): Send SIGINT to DC**
 - Get DC's PID:
 pgrep -af DC
 
@@ -50,7 +50,11 @@ DC will:
 - Show `Shazam !!` and exit
 
 ## Output Sample
+**On Start**
 ![alt text](image-1.png)
+
+**On Shutdown**
+![alt text](image-2.png)
 
 
 ## 📑 Notes
@@ -58,4 +62,6 @@ DC will:
 - `DP-1` is responsible for creating shared memory and the semaphore
 - `DP-2` and `DC` only attach to them
 - Final output always includes `Shazam !!` after graceful shutdown
+- On receiving SIGINT (e.g., via Ctrl+C), the Data Consumer (DC) process initiates a graceful shutdown. This includes reading any remaining letters from the buffer and displaying the final histogram.
+As a result, there may be a slight delay (up to a few seconds) before the program exits and displays the message Shazam !!. This behavior is expected and ensures all data is properly processed and displayed before termination.
 

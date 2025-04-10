@@ -31,9 +31,10 @@
 #define READ_BATCH_SIZE 40
 #define SEM_KEY 0x1234
 
-// Global variables 
+// Global variables
+// Used 'volatile sig_atomic_t' for safe, atomic access between main program and signal handlers
 volatile sig_atomic_t running = 1;
-volatile sig_atomic_t cleanup_mode = 0;
+volatile sig_atomic_t cleanup_mode = 0; 
 int shmid = -1;
 int semid = -1;
 pid_t dp1_pid = -1;
@@ -177,10 +178,12 @@ void display_histogram() {
  * Returns : None
  */
 void cleanup_and_exit() {
-    printf("Final histogram before shutdown:\n");
     // Display final histogram
     display_histogram();
 
+    //Final histogram displayed message
+    printf("\nFinal histogram displayed. Exiting...\n");
+    
     // Exit message 
     printf("Shazam !!\n");
     

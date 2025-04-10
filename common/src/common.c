@@ -18,8 +18,7 @@
  * Outputs : Seeds rand()
  * Returns : None
  */
-__attribute__((constructor))
-static void init_random(void) {
+void init_random(void) {
     srand(time(NULL));
 }
 

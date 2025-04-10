@@ -19,23 +19,23 @@
 #include <signal.h>
 #include <sys/types.h>
 
-/* Letter range constants */
+// Letter range constants
 #define MIN_LETTER 'A'
 #define MAX_LETTER 'T'
 #define LETTER_RANGE (MAX_LETTER - MIN_LETTER + 1)
 
 
-/* Signal handlers */
+// Signal handlers
 void sigint_handler(int signum);
 void sigalrm_handler(int signum);
 
-/* Function to display histogram */
+// Function to display histogram
 void display_histogram(void);
 
-/* Function to clean up and exit */
+// Function to clean up and exit
 void cleanup_and_exit(void);
 
-/* Global variables */
+// Global variables
 extern volatile sig_atomic_t running; // Used in signal handlers and main loop to control program flow
 extern volatile sig_atomic_t cleanup_mode; // Indicates cleanup mode across signal handler and main logic
 extern int shmid; // Shared memory ID needed in multiple functions
